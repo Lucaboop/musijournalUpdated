@@ -108,6 +108,39 @@ class _PastJournalsState extends State<PastJournals> {
                             builder: (context, snapshot) {
                               if (snapshot.hasError) return Text("Something went wrong");
                               if (snapshot.connectionState == ConnectionState.waiting) return CircularProgressIndicator();
+
+                              if(!snapshot.hasData || snapshot.data!.docs.isEmpty)
+                              {
+                                print("data is not null");
+                                return Padding(
+                                  padding: const EdgeInsets.only(left: 20.0, right: 20, bottom: 20),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(10),
+                                      boxShadow: const [
+                                        BoxShadow(
+                                          color: Colors.black26,
+                                          blurRadius: 10,
+                                          offset: Offset(0, 5),
+                                          spreadRadius: 1,
+                                        ),
+                                      ],
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(15.0),
+                                      child: Text(
+                                        "No journals found.",
+                                        style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 30,
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                );
+                              }
+
                               final data = snapshot.data!.docs;
                               final filteredData = data.where((entry) {
                                 Timestamp timestamp = entry["timestamp"];
@@ -122,71 +155,71 @@ class _PastJournalsState extends State<PastJournals> {
                                 return displayDate.contains(currentSearch);
                               }).toList();
                               return ListView.builder(
-                                shrinkWrap: true, // Fixes the "Unbounded Height" error
-                                physics: const NeverScrollableScrollPhysics(), // Let the parent scroll
-                                itemCount: filteredData.length,
-                                itemBuilder: (context, index) {
-                                  var entry = filteredData[index];
-                                  String journal = entry['content'];
-                                  String song = entry['song'];
-                                  int mood = entry["mood"];
-                                  Timestamp timestamp = entry["timestamp"];
-                                  DateTime date = timestamp.toDate();
-                                  String monthName = months[date.month-1];
-                                  String AIOverview = entry['AIOverview'];
-                                  return Padding(
-                                    padding: const EdgeInsets.all(10.0),
-                                    child: InkWell(
-                                      onTap: (){
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute<void>(
-                                            builder: (context) => PastJournal(
-                                              journalData: {
-                                                "content": journal,
-                                                "song": song, //THISWILL PROBABLY BE CHANGED LATER
-                                                "month": monthName,
-                                                "dateAndYear": date,
-                                                "mood": dropDownValueList[mood],
-                                                "AIOverview": AIOverview,
-                                              }
+                                  shrinkWrap: true, // Fixes the "Unbounded Height" error
+                                  physics: const NeverScrollableScrollPhysics(), // Let the parent scroll
+                                  itemCount: filteredData.length,
+                                  itemBuilder: (context, index) {
+                                    var entry = filteredData[index];
+                                    String journal = entry['content'];
+                                    String song = entry['song'];
+                                    int mood = entry["mood"];
+                                    Timestamp timestamp = entry["timestamp"];
+                                    DateTime date = timestamp.toDate();
+                                    String monthName = months[date.month-1];
+                                    String AIOverview = entry['AIOverview'];
+                                    return Padding(
+                                      padding: const EdgeInsets.all(10.0),
+                                      child: InkWell(
+                                        onTap: (){
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute<void>(
+                                              builder: (context) => PastJournal(
+                                                  journalData: {
+                                                    "content": journal,
+                                                    "song": song, //THISWILL PROBABLY BE CHANGED LATER
+                                                    "month": monthName,
+                                                    "dateAndYear": date,
+                                                    "mood": dropDownValueList[mood],
+                                                    "AIOverview": AIOverview,
+                                                  }
+                                              ),
                                             ),
+                                          );
+                                        },
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius: BorderRadius.circular(10),
+                                            boxShadow: const [
+                                              BoxShadow(
+                                                color: Colors.black26,
+                                                blurRadius: 10,
+                                                offset: Offset(0, 2),
+                                                spreadRadius: 0.01,
+                                              ),
+                                            ],
                                           ),
-                                        );
-                                      },
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius: BorderRadius.circular(10),
-                                          boxShadow: const [
-                                            BoxShadow(
-                                              color: Colors.black26,
-                                              blurRadius: 10,
-                                              offset: Offset(0, 2),
-                                              spreadRadius: 0.01,
-                                            ),
-                                          ],
-                                        ),
-                                        child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                          children: [
-                                            Icon(
-                                              items[mood],
-                                              size: 60,
-                                            ),
-                                            Text(
-                                              "$monthName ${date.day}, ${date.year}",
-                                              style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 20,
-                                              )
-                                            ),
-                                          ],
+                                          child: Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                            children: [
+                                              Icon(
+                                                items[mood],
+                                                size: 60,
+                                              ),
+                                              Text(
+                                                  "$monthName ${date.day}, ${date.year}",
+                                                  style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: 20,
+                                                  )
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  );
-                                }
+                                    );
+                                  }
                               );
                             }
                           )

@@ -310,7 +310,7 @@ class _HomePageState extends State<HomePage> {
                           Padding(
                             padding: const EdgeInsets.all(20.0),
                             child: const Text (
-                                'Good morning',
+                                'Good morning!',
                                 style: TextStyle(
                                   fontSize: 25,
                                   fontWeight: FontWeight.bold,
@@ -318,8 +318,8 @@ class _HomePageState extends State<HomePage> {
                                 )
                             ),
                           ),
-                          Icon( //streak of journaling
-                              Icons.local_fire_department_sharp
+                          SizedBox(
+                            width: 20,
                           ),
                           Padding(
                             padding: const EdgeInsets.only(left:34, top:9),
@@ -419,7 +419,7 @@ class _HomePageState extends State<HomePage> {
                               ),
                               backgroundColor: Colors.white,
                             ),
-                            icon: const Icon(Icons.edit),
+                            icon: const Icon(Icons.edit, color: Colors.black),
                             label: const Text(
                                 "New Journal",
                                 style: TextStyle(
@@ -443,7 +443,7 @@ class _HomePageState extends State<HomePage> {
                               ),
                               backgroundColor: Colors.white,
                             ),
-                            icon: const Icon(Icons.search),
+                            icon: const Icon(Icons.search, color: Colors.black),
                             label: const Text(
                                 "Past Journals",
                                 style: TextStyle(
@@ -530,7 +530,7 @@ class _HomePageState extends State<HomePage> {
                                     ),
                                     title: Text(
                                       songName,
-                                      style: const TextStyle(fontWeight: FontWeight.bold),
+                                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                                     ),
                                     subtitle: Text(artistName),
                                     trailing: IconButton(
@@ -573,8 +573,7 @@ class _HomePageState extends State<HomePage> {
                         }
                       ),
                       Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 20.0, vertical: 10.0),
+                        padding: const EdgeInsets.only(bottom: 20, left: 10, right: 10),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [

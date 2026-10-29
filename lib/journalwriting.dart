@@ -325,8 +325,41 @@ class _journalWritingState extends State<journalWriting> {
                             if(_searchResultsFuture == null)
                             {
                               return Padding(
-                                  padding: EdgeInsets.only(top: 10, bottom: 5),
-                                  child: const Text("No songs found.", style: TextStyle(fontSize: 20))
+                                  padding: EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 10),
+                                child: Material(
+                                  elevation: 8.0, // Control shadow depth here
+                                  borderRadius: BorderRadius.circular(15.0),
+                                  shadowColor: Colors.black, // Change shadow color
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(15),
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        SizedBox(
+                                          width: 10,
+                                        ),
+                                        Icon(
+                                          Icons.music_off,
+                                          size: 40,
+                                          color: Colors.black,
+                                        ),
+                                        SizedBox(
+                                          width: 10,
+                                        ),
+                                        Text(
+                                          "No songs found.",
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 17,
+                                          )
+                                        ),
+                                      ],
+                                    )
+                                  ),
+                                ),
+                                  // child: const Text("No songs found.", style: TextStyle(fontSize: 20))
                               );
                             }
                             // State 1: We are still waiting for Spotify to reply
@@ -562,7 +595,7 @@ class _journalWritingState extends State<journalWriting> {
 
                             if(journalController.text.isNotEmpty == true && _selectedSongId?.isNotEmpty == true && selectedIndex != null)
                               {
-                                AIOverview = await askChatGPT("You are to shortly analyze this person's journal of the day they had, and you are to analyze what feelings and emotions this person went through. You will then analyze the lyrics of the song provided and give an analysis on how those lyrics connect to the day that the person had. If the song has no lyrics, base your analysis off of other characterizing criteria, like tempo or genre. Analyze only what is said in the text, do not assume or make up any new information about the user. It is ok to be less analytical if the user didn’t provide much information. Finally, give advice to the person based on what they talked about in their journal. Keep it concise and specific by choosing words with specific meaning that reflects the author's day. Keep your summary under a paragraph. Word it as if you are talking to the person directly by using second person pronouns, with an analytical and less casual tone.");
+                                AIOverview = await askChatGPT("You are to shortly analyze this person's journal of the day they had, and you are to analyze what feelings and emotions this person went through. You will then analyze the lyrics of the song provided and give an analysis on how those lyrics connect to the day that the person had. If the song has no lyrics, base your analysis off of other characterizing criteria, like tempo or genre. Analyze only what is said in the text, do not assume or make up any new information about the user. It is ok to be less analytical if the user didn’t provide much information. Finally, provide targeted, highly specific advice based exclusively on the events described. Address the author directly using second-person pronouns ('you'). Keep it concise and specific by choosing words with specific meaning that reflects the author's day. Keep your summary under a paragraph. Maintain a clinical, objective, and strictly analytical tone. Do not act like a supportive therapist. Completely avoid supportive filler phrases like 'I encourage you to,' 'Remember that,' or 'It is essential to.' Keep your response under 4 sentences total. Be dense with meaning and avoid wordy transitions.");
                                 String? intensity = await askChatGPT("You are to analyze this person's journal of the day they had and the song they chose to go with it. Then, give a score from 1 to 100 about how intense the emotion they picked was that day. YOU MAY ONLY RESPOND WITH A SINGLE NUMBER, NOTHING ELSE.");
                                 print(intensity);
                                 User? user = FirebaseAuth.instance.currentUser;

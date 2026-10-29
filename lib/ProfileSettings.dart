@@ -251,7 +251,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
                     Align(
                       alignment: Alignment.centerLeft,
                       child: Padding(
-                        padding: const EdgeInsets.only(top: 20, left: 25, right: 15),
+                        padding: const EdgeInsets.only(top: 17, left: 25, right: 15),
                         child: Text(
                             "First Name",
                             style: TextStyle(
@@ -293,7 +293,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
                     Align(
                       alignment: Alignment.centerLeft,
                       child: Padding(
-                        padding: const EdgeInsets.only(top: 20, left: 25, right: 15),
+                        padding: const EdgeInsets.only(top: 17, left: 25, right: 15),
                         child: Text(
                             "Last Name",
                             style: TextStyle(
@@ -335,7 +335,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
                     Align(
                       alignment: Alignment.centerLeft,
                       child: Padding(
-                        padding: const EdgeInsets.only(top: 20, left: 25, right: 15),
+                        padding: const EdgeInsets.only(top: 17, left: 25, right: 15),
                         child: Text(
                           "Email",
                           style: TextStyle(
@@ -377,7 +377,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
                     Align(
                       alignment: Alignment.centerLeft,
                       child: Padding(
-                        padding: const EdgeInsets.only(top: 10, left: 25, right: 15),
+                        padding: const EdgeInsets.only(top: 17, left: 25, right: 15),
                         child: Text(
                           "Password",
                           style: TextStyle(
@@ -504,7 +504,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
                     Align(
                       alignment: Alignment.centerLeft,
                       child: Padding(
-                        padding: const EdgeInsets.only(top: 10, left: 25, right: 15),
+                        padding: const EdgeInsets.only(top: 17, left: 25, right: 15),
                         child: Text(
                           "Preferred Music Genre",
                           style: TextStyle(
@@ -640,7 +640,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
                                 side: BorderSide(width:1),
                                 backgroundColor: Colors.white,
                               ),
-                              icon: const Icon(Icons.save_alt),
+                              icon: const Icon(Icons.save_alt, color: Colors.black),
                               label: const Text(
                                 "Save All",
                                 style: TextStyle(
@@ -671,7 +671,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
                                   side: BorderSide(width:1),
                                   backgroundColor: Colors.white,
                                 ),
-                                icon: const Icon(Icons.logout),
+                                icon: const Icon(Icons.logout, color: Colors.red),
                                 label: const Text(
                                   "Sign Out",
                                   style: TextStyle(

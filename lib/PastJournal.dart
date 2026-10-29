@@ -216,6 +216,7 @@ class _PastJournalState extends State<PastJournal> {
                           padding: const EdgeInsets.only(left: 20, bottom: 20, right: 20),
                           child: Text(widget.journalData['content'],
                               style: TextStyle(
+                                  height: 1.6,
                                   color: Colors.black,
                                   fontSize: 18
                               )
@@ -253,6 +254,7 @@ class _PastJournalState extends State<PastJournal> {
                           child: Text(
                             widget.journalData["AIOverview"],
                             style: TextStyle(
+                              height: 1.6,
                               color: Colors.black,
                               fontSize: 18
                             )
