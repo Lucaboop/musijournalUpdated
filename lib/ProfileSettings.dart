@@ -25,6 +25,10 @@ class _ProfileSettingsState extends State<ProfileSettings> {
   final lastNameController = TextEditingController();
   final oldPasswordController = TextEditingController();
   final newPasswordController = TextEditingController();
+  Color saveAllBGColor = Colors.white;
+  Color saveAllTextColor = Colors.black;
+  bool changesMade = false;
+  bool changesSaved = false;
 
   File? _selectedImage;
   final ImagePicker _picker = ImagePicker();
@@ -201,7 +205,45 @@ class _ProfileSettingsState extends State<ProfileSettings> {
                   padding: const EdgeInsets.only(left: 130.0),
                   child: IconButton(
                     onPressed: () {
-                      Navigator.pop(context);
+                      if(changesMade == true && changesSaved == false)
+                        {
+                          print("oh croap[");
+                          showDialog<void>(
+                            context: context,
+                            barrierDismissible: false,
+                            builder: (BuildContext dialogContext) {
+                              return AlertDialog(
+                                title: const Text('Changes not saved. Discard your changes?', style: TextStyle(color: Colors.black)),
+                                backgroundColor: Colors.white,
+                                actions: <Widget>[
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          Navigator.of(dialogContext).pop();
+                                          Navigator.of(context).pop();
+                                        },
+
+                                        child: const Text('Yes'),
+                                      ),
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          Navigator.of(dialogContext).pop();
+                                        },
+                                        child: const Text('No'),
+                                      ),
+                                    ],
+                                  )
+                                ],
+                              );
+                            },
+                          );
+                        }
+                      else
+                        {
+                          Navigator.pop(context);
+                        }
                     },
                     icon: const Icon(Icons.arrow_back),
                   ),
@@ -268,6 +310,16 @@ class _ProfileSettingsState extends State<ProfileSettings> {
                           child: Padding(
                             padding: const EdgeInsets.only(left:25.0),
                             child: TextField(
+                              onChanged: (value)
+                              {
+                                saveAllBGColor = Colors.blue;
+                                saveAllTextColor = Colors.white;
+                                changesMade = true;
+                                changesSaved = false;
+                                print(changesMade);
+                                print(changesSaved);
+                                setState(() {});
+                              },
                               focusNode: firstNameFocusNode,
                               controller: firstNameController,
                               style: TextStyle(color: Colors.black),
@@ -310,6 +362,14 @@ class _ProfileSettingsState extends State<ProfileSettings> {
                           child: Padding(
                             padding: const EdgeInsets.only(left:25.0),
                             child: TextField(
+                              onChanged: (value)
+                              {
+                                saveAllBGColor = Colors.blue;
+                                saveAllTextColor = Colors.white;
+                                changesMade = true;
+                                changesSaved = false;
+                                setState(() {});
+                              },
                               focusNode: lastnameFocusNode,
                               controller: lastNameController,
                               style: TextStyle(color: Colors.black),
@@ -352,6 +412,14 @@ class _ProfileSettingsState extends State<ProfileSettings> {
                           child: Padding(
                             padding: const EdgeInsets.only(left:25.0),
                             child: TextField(
+                              onChanged: (value)
+                              {
+                                saveAllBGColor = Colors.blue;
+                                saveAllTextColor = Colors.white;
+                                changesMade = true;
+                                changesSaved = false;
+                                setState(() {});
+                              },
                               controller: emailController,
                               focusNode: emailFocusNode,
                               style: TextStyle(color: Colors.black),
@@ -528,6 +596,11 @@ class _ProfileSettingsState extends State<ProfileSettings> {
                         value: selectedGenre,
                         onChanged: (String? newValue) {
                           setState(() {
+                            saveAllBGColor = Colors.blue;
+                            saveAllTextColor = Colors.white;
+                            changesMade = true;
+                            changesSaved = false;
+                            setState(() {});
                             selectedGenre = newValue;
                           });
                         },
@@ -557,6 +630,10 @@ class _ProfileSettingsState extends State<ProfileSettings> {
                               padding: const EdgeInsets.all(8.0),
                               child: ElevatedButton.icon(
                                 onPressed: () async {
+                                  changesSaved = true;
+                                  saveAllBGColor = Colors.white;
+                                  saveAllTextColor = Colors.black;
+                                  setState(() {});
                                   User? user = FirebaseAuth.instance.currentUser;
                                   FirebaseFirestore.instance.collection("users").doc(
                                       user?.uid).set({
@@ -638,13 +715,13 @@ class _ProfileSettingsState extends State<ProfileSettings> {
                                     borderRadius: BorderRadius.circular(15),
                                   ),
                                 side: BorderSide(width:1),
-                                backgroundColor: Colors.white,
+                                backgroundColor: saveAllBGColor,
                               ),
-                              icon: const Icon(Icons.save_alt, color: Colors.black),
-                              label: const Text(
+                              icon: Icon(Icons.save_alt, color: saveAllTextColor),
+                              label: Text(
                                 "Save All",
                                 style: TextStyle(
-                                  color: Colors.black,
+                                  color: saveAllTextColor,
                                 )
                                 ),
                               ),
