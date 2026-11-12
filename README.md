@@ -8,6 +8,10 @@ MusiJournal is a daily journal built with Flutter. Users write about their day, 
 and pick the emotion they felt most. The app then gives them a short AI reflection on how the song
 connects to their day.
 
+### privacy policy 
+https://cm-server-two.vercel.app/privacy-policy/xNcNFOYfean0ZjpxjjIN
+
+
 ### App Store listing
 
 **Name**
