@@ -1,4 +1,4 @@
-package com.example.hi
+package com.lucashu.musiJournal
 
 import io.flutter.embedding.android.FlutterActivity
 

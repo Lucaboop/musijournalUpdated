@@ -158,7 +158,7 @@ class _SignInState extends State<SignIn> {
                                 User? user = FirebaseAuth.instance.currentUser;
                                 FirebaseFirestore.instance.collection("users").doc(user?.uid).update({"email": username.text});
                                 //update current user's document named "email"
-                                Navigator.push(//send user to the home page
+                                Navigator.pushReplacement(//send user to the home page
                                     context,
                                     MaterialPageRoute<void>(
                                       builder: (context) => const HomePage(),

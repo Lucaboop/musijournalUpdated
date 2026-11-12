@@ -52,7 +52,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyA7kK-VZzhqHZv0c7v_YGNRZcc9wXQPBeU',
-    appId: '1:498976315854:android:2fd27ebf0b2c13ca84339f',
+    appId: '1:498976315854:android:7a54042af696f06a84339f',
     messagingSenderId: '498976315854',
     projectId: 'musijournal-c3334',
     storageBucket: 'musijournal-c3334.firebasestorage.app',
@@ -60,11 +60,11 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyAtW92dTEIqHWHq4gyuhhIrZ6xWSxEVtdo',
-    appId: '1:498976315854:ios:7b412a550be1653184339f',
+    appId: '1:498976315854:ios:359ec7aafe9f5f6984339f',
     messagingSenderId: '498976315854',
     projectId: 'musijournal-c3334',
     storageBucket: 'musijournal-c3334.firebasestorage.app',
-    iosBundleId: 'com.lucashu.musictherapytrackerWindows',
+    iosBundleId: 'com.lucashu.musiJournal',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
