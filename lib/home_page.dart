@@ -1,15 +1,12 @@
-import 'dart:convert';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'CreateSpotifyToken.dart';
+import 'cloud_api.dart';
+import 'play_on_spotify_button.dart';
 import 'JournalAlreadyWritten.dart';
 import 'journalwriting.dart';
 import 'AllPastJournals.dart';
 import 'ProfileSettings.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:dart_openai/dart_openai.dart';
-import 'package:http/http.dart' as http;
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -38,129 +35,15 @@ class _HomePageState extends State<HomePage> {
     };
   }
 
-  Future<String?> askChatGPT(String prompt) async {
-    try {
-      // 1. Create the message you want to send
-      final systemMessage = OpenAIChatCompletionChoiceMessageModel(
-        content: [
-          OpenAIChatCompletionChoiceMessageContentItemModel.text(
-            prompt,
-          ),
-        ],
-        role: OpenAIChatMessageRole.system,
-      );
-
-      User? user = FirebaseAuth.instance.currentUser;
-      DocumentSnapshot docSnapshot = await FirebaseFirestore.instance
-          .collection('users') // Replace with your collection name
-          .doc(user?.uid)     // Pass the specific Document ID
-          .get();
-
-      String prefSongGenre = docSnapshot.get("preferredGenre");
-
-      final userMessage = OpenAIChatCompletionChoiceMessageModel(
-        content: [
-          OpenAIChatCompletionChoiceMessageContentItemModel.text(
-              "My preferred music genre is $prefSongGenre."
-          ),
-        ],
-        role: OpenAIChatMessageRole.user,
-      );
-
-      // 2. Send the request to the API
-      final chatCompletion = await OpenAI.instance.chat.create(
-        model: "gpt-4o-mini", // fast and cheap model
-        messages: [systemMessage, userMessage],
-      );
-
-      // 3. Print or use the response!
-      String? response = chatCompletion.choices.first.message.content?.first.text;
-      // debugPrint(response);
-      //
-      // AIOverview = response;
-      return(response);
-    } catch (e) {
-      print("Something went wrong: $e");
-    }
-    return null;
+  String _getGreeting() {
+    int hour = DateTime.now().hour;
+    if (hour < 12) return 'Good morning!';
+    if (hour < 17) return 'Good afternoon!';
+    return 'Good evening!';
   }
 
   late Future<List<dynamic>> recommendedSongs;
 
-  // This method handles both the ChatGPT call AND the Spotify call
-  Future<List<dynamic>> fetchRecommendations() async {
-    String? AIresponse = await askChatGPT(
-        "Given the user's preferred music genre, find 3 songs with varying emotion from that genre. Only state the name of the songs, with a forwards slash to separate each song name."
-    );
-
-    if (AIresponse != null) {
-      // Wait for the Spotify search to finish and return the list
-      return await findRecommendedSongs(AIresponse);
-    }
-
-    // Return an empty list if ChatGPT failed to respond
-    return [];
-  }
-
-  Future<List<dynamic>> findRecommendedSongs(String AIResponse) async {
-
-    final authService = SpotifyAuthService(); // Gets the Singleton
-    String? token = await authService.getValidToken(); // Fetches a new token
-
-    List<String> songNames = AIResponse.split(' / ');
-
-    // 1. Create a list to hold the songs we find
-    List<dynamic> allFoundSongs = [];
-
-    for (String currentSong in songNames) {
-      final url = Uri.https('api.spotify.com', '/v1/search', {
-        'q': currentSong,
-        'type': 'track',
-        'limit': '1',
-      });
-
-      try {
-        final response = await http.get(
-          url,
-          headers: {
-            'Authorization': 'Bearer $token',
-            'Content-Type': 'application/json',
-          },
-        );
-
-        if (response.statusCode == 200) {
-          final Map<String, dynamic> data = jsonDecode(response.body);
-          dynamic song = data['tracks']['items'];
-
-          List<dynamic> resolvedList = await song;
-          if (resolvedList.isEmpty) {
-            print('No tracks found for "$currentSong".');
-            continue; // Skip to the next song instead of returning
-          }
-
-          print('Top result for "$currentSong":');
-          String songName = song[0]['name']; // Ensure you are grabbing the first item in the array
-          String artistName = song[0]['artists'][0]['name'];
-          String spotifyId = song[0]['id'];
-
-          print('- $songName by $artistName (ID: $spotifyId)');
-
-          // Add the found song to our list
-          allFoundSongs.add(song);
-
-        } else {
-          print('Failed to search: ${response.statusCode}');
-          print('Error message: ${response.body}');
-        }
-      } catch (e) {
-        print('Network error occurred: $e');
-      }
-    }
-
-    // 2. Return the completed list at the very end of the function
-    return allFoundSongs;
-
-  }
     Future<List<Map<String, dynamic>>> retrieveUserInfo() async {
       User? user = FirebaseAuth.instance.currentUser;
       if (user == null) return [];
@@ -259,7 +142,7 @@ class _HomePageState extends State<HomePage> {
 
       // Assign the Future IMMEDIATELY. Do not use 'await' here!
       // This satisfies the 'late' keyword requirement.
-      recommendedSongs = fetchRecommendations();
+      recommendedSongs = getRecommendedSongs();
     }
     User? user = FirebaseAuth.instance.currentUser;
 
@@ -309,9 +192,9 @@ class _HomePageState extends State<HomePage> {
                         children: [
                           Padding(
                             padding: const EdgeInsets.all(20.0),
-                            child: const Text (
-                                'Good morning!',
-                                style: TextStyle(
+                            child: Text (
+                                _getGreeting(),
+                                style: const TextStyle(
                                   fontSize: 25,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.white,
@@ -499,16 +382,16 @@ class _HomePageState extends State<HomePage> {
                             itemCount: mySongs.length,
                             itemBuilder: (context, index) {
 
-                              // 1. Grab the raw Spotify search result
-                              var trackList = mySongs[index];
+                              // 1. Grab the Spotify track
+                              var track = mySongs[index];
 
                               // 2. Extract the strings and the image URL
-                              String spotifyID = trackList[0]['id'];
-                              String songName = trackList[0]['name'];
-                              String artistName = trackList[0]['artists'][0]['name'];
+                              String spotifyID = track['id'];
+                              String songName = track['name'];
+                              String artistName = track['artists'][0]['name'];
 
                               // Grab the medium-sized cover art (index 1)
-                              String coverArtUrl = trackList[0]['album']['images'][1]['url'];
+                              String coverArtUrl = track['album']['images'][1]['url'];
 
                               // 3. Draw a beautiful ListTile
                               return Padding(
@@ -533,36 +416,42 @@ class _HomePageState extends State<HomePage> {
                                       style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                                     ),
                                     subtitle: Text(artistName),
-                                    trailing: IconButton(
-                                      color: Colors.black,
-                                      icon: const Icon(Icons.edit),
-                                      onPressed: () {
-                                        _checkIfUserWroteToday();
-                                        if (userWroteToday == true) {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(builder: (
-                                                context) => const JournalAlreadyWritten()),
-                                          ).then((_) {
+                                    trailing: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        PlayOnSpotifyButton(trackId: spotifyID, compact: true),
+                                        IconButton(
+                                          color: Colors.black,
+                                          icon: const Icon(Icons.edit),
+                                          onPressed: () {
                                             _checkIfUserWroteToday();
-                                            _refreshJournals();
-                                          });
-                                        }
-                                        else {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(builder: (
-                                                context) => journalWriting(
-                                              selectedSongName: songName,
-                                              selectedArtistName: artistName,
-                                              selectedCoverUrl: coverArtUrl,
-                                              selectedSongId: spotifyID,)),
-                                          ).then((_) {
-                                            _checkIfUserWroteToday();
-                                            _refreshJournals();
-                                          });
-                                        }
-                                      },
+                                            if (userWroteToday == true) {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(builder: (
+                                                    context) => const JournalAlreadyWritten()),
+                                              ).then((_) {
+                                                _checkIfUserWroteToday();
+                                                _refreshJournals();
+                                              });
+                                            }
+                                            else {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(builder: (
+                                                    context) => journalWriting(
+                                                  selectedSongName: songName,
+                                                  selectedArtistName: artistName,
+                                                  selectedCoverUrl: coverArtUrl,
+                                                  selectedSongId: spotifyID,)),
+                                              ).then((_) {
+                                                _checkIfUserWroteToday();
+                                                _refreshJournals();
+                                              });
+                                            }
+                                          },
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ),

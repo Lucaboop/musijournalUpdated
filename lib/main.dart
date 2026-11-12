@@ -1,31 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:musictherapytracker_windows/profile_setup.dart';
 import 'firebase_options.dart';
 import 'home_page.dart';
 import 'SignIn.dart';
 import 'SignUp.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:dart_openai/dart_openai.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  await dotenv.load(fileName: ".env");
-  OpenAI.apiKey = dotenv.env['OPENAI_API_KEY']!;
-  runApp(const MyApp());
+  // Wait for Firebase to restore a saved login, so signed-in users skip Sign Up.
+  final User? user = await FirebaseAuth.instance.authStateChanges().first;
+  runApp(MyApp(isSignedIn: user != null));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final bool isSignedIn;
+  const MyApp({super.key, required this.isSignedIn});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: 'Flutter Demo',
+        title: 'MusiJournal',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           textTheme: GoogleFonts.poppinsTextTheme().apply(
@@ -35,7 +35,7 @@ class MyApp extends StatelessWidget {
 
         ),
         // home: SignIn()
-        home: SignUp()
+        home: isSignedIn ? const HomePage() : const SignUp()
     );
   }
 }

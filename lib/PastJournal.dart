@@ -1,43 +1,6 @@
 import 'package:flutter/material.dart';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
-import 'CreateSpotifyToken.dart';
-
-Future<Map<String, String>?> fetchSongDetails(String songId, String accessToken) async {
-  final url = Uri.https('api.spotify.com', '/v1/tracks/$songId');
-
-  try {
-    final response = await http.get(
-      url,
-      headers: {'Authorization': 'Bearer $accessToken'},
-    );
-
-    if (response.statusCode == 200) {
-      final Map<String, dynamic> trackData = jsonDecode(response.body);
-
-      // 1. Grab the image URL safely
-      String imageUrl = '';
-      var images = trackData['album']['images'];
-      if (images != null && images.isNotEmpty) {
-        imageUrl = images.first['url']; // Grab the biggest image
-      }
-
-      // 2. Package everything up into a Map and return it!
-      return {
-        'imageUrl': imageUrl,
-        'name': trackData['name'],                     // "Ode to Joy"
-        'artist': trackData['artists'][0]['name'],     // "Ludwig van Beethoven"
-      };
-
-    } else {
-      print('Failed to load track: ${response.statusCode}');
-    }
-  } catch (e) {
-    print('Network error: $e');
-  }
-
-  return null;
-}
+import 'cloud_api.dart';
+import 'play_on_spotify_button.dart';
 
 String truncateString(String text)
 {
@@ -70,14 +33,7 @@ class _PastJournalState extends State<PastJournal> {
 
   // Notice we changed String? to Map<String, String>?
   Future<Map<String, String>?> _loadSongData() async {
-  final authService = SpotifyAuthService();
-  String? validToken = await authService.getValidToken();
-
-  if (validToken != null) {
-  // Pass the ID and the token to our upgraded function
-  return fetchSongDetails(widget.journalData['song'], validToken);
-  }
-  return null;
+  return fetchSongDetails(widget.journalData['song']);
 }
 
 
@@ -174,6 +130,8 @@ class _PastJournalState extends State<PastJournal> {
                                                   ),
                                                   textAlign: TextAlign.center,
                                                 ),
+                                                const SizedBox(height: 8),
+                                                PlayOnSpotifyButton(trackId: widget.journalData['song']),
                                               ],
                                             );
                                           }

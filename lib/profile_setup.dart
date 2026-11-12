@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:image_cropper/image_cropper.dart';
 import 'package:toastification/toastification.dart';
 import 'home_page.dart';
 import 'SignUp.dart';
@@ -161,192 +160,194 @@ class _profile_setupState extends State<profile_setup> {
                       )
                     ],
                   ),
-                  child: Column(
-                    children: [
-                      SizedBox(height: 25),
-                      GestureDetector(
-                        onTap: _isUploading ? null : _pickImage,
-                        child: CircleAvatar(
-                          radius: 65,
-                          backgroundColor: Colors.grey[200],
-                          backgroundImage: _selectedImage != null
-                              ? FileImage(_selectedImage!)
-                              : (_uploadedImageUrl != null
-                                ? NetworkImage(_uploadedImageUrl!) as ImageProvider
-                                : null),
-                          child: (_selectedImage == null && _uploadedImageUrl == null)
-                              ? const Icon(Icons.add_a_photo_outlined, size: 40, color: Colors.grey)
-                              : null,
-                        ),
-                      ),
-                      SizedBox(height: 10,),
-                      if (_isUploading)
-                        const CircularProgressIndicator()
-                      else if (_selectedImage != null && _uploadedImageUrl == null)
-                      // Show save button if they picked a new image but haven't uploaded yet
-                        ElevatedButton(
-                          onPressed: _uploadAndSaveProfile,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.blueAccent,
-                            foregroundColor: Colors.white,
-                          ),
-                          child: const Text('Save Profile Picture'),
-                        )
-                      else
-                      // Helper text
-                        Text(
-                          _uploadedImageUrl == null
-                              ? 'Tap to add a photo'
-                              : 'Tap your photo to change it',
-                          style: const TextStyle(fontSize: 14, color: Colors.grey),
-                        ),
-                      // Text(
-                      //   "Press on avatar to choose profile picture.",
-                      //   style: TextStyle(
-                      //     color: Colors.black45,
-                      //     fontSize: 15,
-                      //   )
-                      // ),
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 30, left: 30, right: 15),
-                          child: Text(
-                            "First Name",
-                            style: GoogleFonts.poppins(
-                              fontSize: 20,
-                              color: Colors.black,
-                            )
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        SizedBox(height: 25),
+                        GestureDetector(
+                          onTap: _isUploading ? null : _pickImage,
+                          child: CircleAvatar(
+                            radius: 65,
+                            backgroundColor: Colors.grey[200],
+                            backgroundImage: _selectedImage != null
+                                ? FileImage(_selectedImage!)
+                                : (_uploadedImageUrl != null
+                                  ? NetworkImage(_uploadedImageUrl!) as ImageProvider
+                                  : null),
+                            child: (_selectedImage == null && _uploadedImageUrl == null)
+                                ? const Icon(Icons.add_a_photo_outlined, size: 40, color: Colors.grey)
+                                : null,
                           ),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left:30.0, right: 30.0,),
-                        child: TextField(
-                          controller: firstName,
-                          decoration: InputDecoration(
-                            hintText: "First name",
-                            filled: true,
-                            fillColor: Colors.white,
-                            border: OutlineInputBorder(),
+                        SizedBox(height: 10,),
+                        if (_isUploading)
+                          const CircularProgressIndicator()
+                        else if (_selectedImage != null && _uploadedImageUrl == null)
+                        // Show save button if they picked a new image but haven't uploaded yet
+                          ElevatedButton(
+                            onPressed: _uploadAndSaveProfile,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.blueAccent,
+                              foregroundColor: Colors.white,
+                            ),
+                            child: const Text('Save Profile Picture'),
+                          )
+                        else
+                        // Helper text
+                          Text(
+                            _uploadedImageUrl == null
+                                ? 'Tap to add a photo'
+                                : 'Tap your photo to change it',
+                            style: const TextStyle(fontSize: 14, color: Colors.grey),
                           ),
-                          style: TextStyle(
-                            color: Colors.black,
-                          ),
-                          onChanged: (value) {
-                            setState(() {});
-                          },
-                        ),
-                      ),
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 30, left: 30, right: 15),
-                          child: Text(
-                            "Last Name",
-                            style: GoogleFonts.poppins(
-                              fontSize: 20,
-                              color: Colors.black,
-                            )
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left:30.0, right: 30.0,),
-                        child: TextField(
-                          controller: lastName,
-                          decoration: InputDecoration(
-                            hintText: "Last Name",
-                            filled: true,
-                            fillColor: Colors.white,
-                            border: OutlineInputBorder(),
-                          ),
-                          style: TextStyle(
-                            color: Colors.black,
-                          ),
-                          onChanged: (value) {
-                            setState(() {});
-                          },
-                        ),
-                      ),
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 10, left: 25, right: 15),
-                          child: Text(
-                              "Preferred Music Genre",
-                              style: TextStyle(
-                                color: Colors.black,
+                        // Text(
+                        //   "Press on avatar to choose profile picture.",
+                        //   style: TextStyle(
+                        //     color: Colors.black45,
+                        //     fontSize: 15,
+                        //   )
+                        // ),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Padding(
+                            padding: const EdgeInsets.only(top: 30, left: 30, right: 15),
+                            child: Text(
+                              "First Name",
+                              style: GoogleFonts.poppins(
                                 fontSize: 20,
+                                color: Colors.black,
                               )
+                            ),
                           ),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 10, left: 29, right: 29),
-                        child: DropdownButtonFormField<String>(
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(5)),
+                        Padding(
+                          padding: const EdgeInsets.only(left:30.0, right: 30.0,),
+                          child: TextField(
+                            controller: firstName,
+                            decoration: InputDecoration(
+                              hintText: "First name",
+                              filled: true,
+                              fillColor: Colors.white,
+                              border: OutlineInputBorder(),
+                            ),
+                            style: TextStyle(
+                              color: Colors.black,
+                            ),
+                            onChanged: (value) {
+                              setState(() {});
+                            },
                           ),
-                          initialValue: selectedGenre,
-
-                          hint: const Text("Select a Genre"),
-                          onChanged: (String? newValue) {
-                            setState(() {
-                              selectedGenre = newValue;
-                            });
-                          },
-                          items: Genres.map<DropdownMenuItem<String>>((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Padding(
-                                padding: const EdgeInsets.only(left: 25.0),
-                                child: Text(
-                                    value,
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                    )
-                                ),
-                              ),
-                            );
-                          }).toList(),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 10.0, right: 10, bottom: 10, top: 60),
-                        child: SizedBox(
-                          height: 40,
-                          width: double.infinity,
-                          child: FloatingActionButton.large(
-                            backgroundColor: Colors.blue[300],
-                            onPressed: () async {
-
-                              final User? user = FirebaseAuth.instance.currentUser;
-                              final String? uid = user?.uid;
-
-                              await db.collection("users").doc(uid).update({
-                                "first": firstName.text,
-                                "last": lastName.text,
-                                "preferredGenre": selectedGenre,
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Padding(
+                            padding: const EdgeInsets.only(top: 30, left: 30, right: 15),
+                            child: Text(
+                              "Last Name",
+                              style: GoogleFonts.poppins(
+                                fontSize: 20,
+                                color: Colors.black,
+                              )
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left:30.0, right: 30.0,),
+                          child: TextField(
+                            controller: lastName,
+                            decoration: InputDecoration(
+                              hintText: "Last Name",
+                              filled: true,
+                              fillColor: Colors.white,
+                              border: OutlineInputBorder(),
+                            ),
+                            style: TextStyle(
+                              color: Colors.black,
+                            ),
+                            onChanged: (value) {
+                              setState(() {});
+                            },
+                          ),
+                        ),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Padding(
+                            padding: const EdgeInsets.only(top: 10, left: 25, right: 15),
+                            child: Text(
+                                "Preferred Music Genre",
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 20,
+                                )
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 10, left: 29, right: 29),
+                          child: DropdownButtonFormField<String>(
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(5)),
+                            ),
+                            initialValue: selectedGenre,
+                    
+                            hint: const Text("Select a Genre"),
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                selectedGenre = newValue;
                               });
-
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute<void>(
-                                  builder: (context) => const HomePage(), // The new page widget
+                            },
+                            items: Genres.map<DropdownMenuItem<String>>((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(left: 25.0),
+                                  child: Text(
+                                      value,
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                      )
+                                  ),
                                 ),
                               );
-                            },
-                            child: Text(
-                              "Continue",
-                              style: TextStyle(
-                                color: Colors.white,
+                            }).toList(),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 10.0, right: 10, bottom: 10, top: 60),
+                          child: SizedBox(
+                            height: 40,
+                            width: double.infinity,
+                            child: FloatingActionButton.large(
+                              backgroundColor: Colors.blue[300],
+                              onPressed: () async {
+                    
+                                final User? user = FirebaseAuth.instance.currentUser;
+                                final String? uid = user?.uid;
+                    
+                                await db.collection("users").doc(uid).update({
+                                  "first": firstName.text,
+                                  "last": lastName.text,
+                                  "preferredGenre": selectedGenre,
+                                });
+                    
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute<void>(
+                                    builder: (context) => const HomePage(), // The new page widget
+                                  ),
+                                );
+                              },
+                              child: Text(
+                                "Continue",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 )
               )
